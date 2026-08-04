@@ -13,55 +13,57 @@ const assessmentSchema = new mongoose.Schema(
     },
     template: {
       type: String,
-      enum: ["PHQ-9", "GAD-7", "CUSTOM"],
+      enum: ["PHQ-9", "GAD-7"],
       required: true,
     },
     responses: {
-      type: Object,
+      type: Map,
+      of: Number,
       required: true,
     },
-    score: {
+    totalScore: {
       type: Number,
     },
     severity: {
       type: String,
-      enum: ["Minimal", "Mild", "Moderate", "Severe"],
+      enum: ["Minimal", "Mild", "Moderate", "Moderately Severe", "Severe"],
+    },
+    therapistNotes: {
+      type: String,
     },
     completedAt: {
       type: Date,
       default: Date.now,
     },
-    therapistNotes: {
-      type: String,
-    },
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true },
 );
 
-// Pre-save middleware to calculate score
-assessmentSchema.pre("save", function (next) {
-  if (this.template === "PHQ-9" || this.template === "GAD-7") {
-    // Calculate total score from responses
-    const responses = Object.values(this.responses);
-    this.score = responses.reduce((sum, val) => sum + (parseInt(val) || 0), 0);
-
-    // Determine severity
-    if (this.template === "PHQ-9") {
-      if (this.score <= 4) this.severity = "Minimal";
-      else if (this.score <= 9) this.severity = "Mild";
-      else if (this.score <= 14) this.severity = "Moderate";
-      else if (this.score <= 19) this.severity = "Moderately Severe";
-      else this.severity = "Severe";
-    } else if (this.template === "GAD-7") {
-      if (this.score <= 4) this.severity = "Minimal";
-      else if (this.score <= 9) this.severity = "Mild";
-      else if (this.score <= 14) this.severity = "Moderate";
-      else this.severity = "Severe";
+// Pre-save hook to calculate totalScore and severity
+assessmentSchema.pre("save", async function () {
+  // Calculate total score
+  let total = 0;
+  if (this.responses) {
+    for (let value of this.responses.values()) {
+      total += value;
     }
   }
-  next();
+  this.totalScore = total;
+
+  // Determine severity based on template
+  if (this.template === "PHQ-9") {
+    if (total >= 0 && total <= 4) this.severity = "Minimal";
+    else if (total >= 5 && total <= 9) this.severity = "Mild";
+    else if (total >= 10 && total <= 14) this.severity = "Moderate";
+    else if (total >= 15 && total <= 19) this.severity = "Moderately Severe";
+    else if (total >= 20 && total <= 27) this.severity = "Severe";
+  } else if (this.template === "GAD-7") {
+    if (total >= 0 && total <= 4) this.severity = "Minimal";
+    else if (total >= 5 && total <= 9) this.severity = "Mild";
+    else if (total >= 10 && total <= 14) this.severity = "Moderate";
+    else if (total >= 15 && total <= 21) this.severity = "Severe";
+  }
+  // no next() call needed — Mongoose resolves when the promise resolves
 });
 
 module.exports = mongoose.model("Assessment", assessmentSchema);

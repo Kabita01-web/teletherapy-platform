@@ -6,7 +6,7 @@ const Appointment = require("../models/Appointment");
 // @access  Private (Client only)
 const createAssessment = async (req, res) => {
   try {
-    const { appointmentId, template, responses } = req.body;
+    const { template, responses } = req.body;
 
     // Validate required fields
     if (!template || !responses) {
@@ -15,36 +15,21 @@ const createAssessment = async (req, res) => {
       });
     }
 
-    // If appointment is linked, verify it exists and belongs to client
-    if (appointmentId) {
-      const appointment = await Appointment.findById(appointmentId);
-      if (!appointment) {
-        return res.status(404).json({ message: "Appointment not found" });
-      }
-      if (appointment.client.toString() !== req.user._id.toString()) {
-        return res.status(403).json({
-          message: "You are not authorized to link this appointment",
-        });
-      }
-    }
-
-    // Create assessment
+    // Skip the appointment lookup entirely! Just create the assessment.
     const assessment = new Assessment({
       client: req.user._id,
-      appointment: appointmentId,
       template,
       responses,
+      // We are NOT linking an appointment here temporarily
     });
 
     await assessment.save();
 
     await assessment.populate("client", "name email");
-    if (appointmentId) {
-      await assessment.populate("appointment", "scheduledAt status");
-    }
 
     res.status(201).json(assessment);
   } catch (error) {
+    console.error("Error creating assessment:", error);
     res.status(500).json({ message: error.message });
   }
 };
