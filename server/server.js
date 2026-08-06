@@ -8,6 +8,8 @@ const appointmentRoutes = require("./routes/appointmentRoute");
 const assessmentRoute = require("./routes/assementRoute");
 const noteRoutes = require("./routes/noteRoutes");
 const resourceRoutes = require("./routes/resourceRoute");
+const chatRoutes = require("./routes/chatRoute");
+
 const app = express();
 
 // Connect Database
@@ -23,6 +25,7 @@ app.use("/api/appointments", appointmentRoutes);
 app.use("/api/assessments", assessmentRoute);
 app.use("/api/notes", noteRoutes);
 app.use("/api/resources", resourceRoutes);
+app.use("/api/chat", chatRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "Teletherapy API is running" });
