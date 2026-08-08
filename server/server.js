@@ -10,6 +10,7 @@ const noteRoutes = require("./routes/noteRoutes");
 const resourceRoutes = require("./routes/resourceRoute");
 const chatRoutes = require("./routes/chatRoute");
 const videoRoutes = require("./routes/videoRoute");
+const adminRoutes = require("./routes/adminRoute");
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use("/api/notes", noteRoutes);
 app.use("/api/resources", resourceRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/video", videoRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "Teletherapy API is running" });
