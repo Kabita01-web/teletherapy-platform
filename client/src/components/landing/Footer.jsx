@@ -17,33 +17,7 @@ const socialLinks = [
 export default function Footer() {
   return (
     <footer className="bg-surface border-t border-outline-variant" id="footer">
-      {/* Newsletter strip */}
-      <div className="border-b border-outline-variant">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-16 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div>
-            <h3 className="text-headline-md font-headline-md text-on-background mb-1">
-              Mental wellness, in your inbox
-            </h3>
-            <p className="text-body-sm font-body-sm text-text-muted">
-              Weekly insights, therapist tips, and mindfulness exercises — free.
-            </p>
-          </div>
-          <div className="flex gap-2 w-full md:w-auto">
-            <input
-              id="footer-email-input"
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 md:w-64 px-4 py-2.5 rounded-full border border-outline-variant text-body-md font-body-md text-on-surface bg-surface-container-lowest focus:outline-none focus:border-primary transition-colors text-sm"
-            />
-            <button
-              id="footer-newsletter-btn"
-              className="font-label-md text-label-md bg-primary text-on-primary px-5 py-2.5 rounded-full hover:bg-primary-container hover:text-on-primary-container transition-colors flex items-center gap-1.5 flex-shrink-0"
-            >
-              Subscribe <ArrowRight size={14} />
-            </button>
-          </div>
-        </div>
-      </div>
+     
 
       {/* Main footer */}
       <div className="max-w-[1280px] mx-auto px-6 md:px-16 py-14">
