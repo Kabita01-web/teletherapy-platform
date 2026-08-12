@@ -30,7 +30,7 @@ app.use("/api/resources", resourceRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/video", videoRoutes);
 app.use("/api/admin", adminRoutes);
-
+ 
 app.get("/", (req, res) => {
   res.json({ message: "Teletherapy API is running" });
 });
