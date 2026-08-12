@@ -77,16 +77,6 @@ export default function HowItWorks() {
             </div>
           ))}
         </div>
-
-        {/* CTA */}
-        <div className="text-center mt-16">
-          <button
-            id="how-it-works-cta-btn"
-            className="font-label-md text-label-md bg-primary text-on-primary px-10 py-4 rounded-full hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-md text-label-md"
-          >
-            Start Your Journey Today
-          </button>
-        </div>
       </div>
     </section>
   );
