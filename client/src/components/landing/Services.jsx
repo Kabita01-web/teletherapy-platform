@@ -171,10 +171,7 @@ export default function Services() {
                   {description}
                 </p>
               </div>
-              <div className="flex items-center gap-1.5 text-primary text-label-md font-['Plus_Jakarta_Sans',sans-serif] font-semibold mt-auto group-hover:gap-2.5 transition-all duration-200">
-                <span>Learn more</span>
-                <ArrowRight size={14} />
-              </div>
+              
             </motion.div>
           ))}
         </motion.div>
