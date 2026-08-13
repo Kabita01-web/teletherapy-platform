@@ -1,5 +1,13 @@
-import { useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import { Star, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
+
+/**
+ * Same compact, restrained card design as the single-card version —
+ * small avatar, small corner quote mark, body-md quote text, shadow-sm —
+ * just laid out 3-up (2 on tablet, 1 on mobile) in a horizontally
+ * scrollable, snap-aligned row instead of one card at a time.
+ */
 
 const testimonials = [
   {
@@ -10,7 +18,7 @@ const testimonials = [
     avatarText: 'text-primary',
     rating: 5,
     quote:
-      'I was skeptical about online therapy, but Inner Balance changed everything. My therapist felt like a real partner in my healing — not just someone reading from a script. After 8 weeks, my panic attacks have reduced dramatically.',
+      'I was skeptical about online therapy, but Inner Balance changed everything. My therapist felt like a real partner in my healing.',
     therapist: 'Dr. Meera Iyer',
     specialty: 'Anxiety & CBT',
   },
@@ -22,7 +30,7 @@ const testimonials = [
     avatarText: 'text-on-secondary-container',
     rating: 5,
     quote:
-      'Losing my father was devastating. I found Inner Balance at my lowest, and my therapist guided me through grief in a way I never expected was possible. The convenience of connecting from home made it so much easier to show up consistently.',
+      'I found Inner Balance at my lowest, and my therapist guided me through grief in a way I never expected was possible.',
     therapist: 'Dr. Kavita Nair',
     specialty: 'Grief Counselling',
   },
@@ -34,7 +42,7 @@ const testimonials = [
     avatarText: 'text-deep-earth',
     rating: 5,
     quote:
-      "Our relationship was at a breaking point. After just 12 sessions with our Inner Balance therapist, we have the tools and language to actually hear each other. Best investment we've ever made in our marriage.",
+      "After 12 sessions with our Inner Balance therapist, we have the tools and language to actually hear each other.",
     therapist: 'Dr. Priya Sharma',
     specialty: 'Couples & Relationships',
   },
@@ -46,108 +54,137 @@ const testimonials = [
     avatarText: 'text-primary',
     rating: 5,
     quote:
-      "I was burning out fast and couldn't see a way forward. The matching process took 20 minutes and within a week I had my first session. My therapist helped me set boundaries I never thought I deserved. Genuinely life-changing.",
+      'The matching process took 20 minutes and within a week I had my first session — genuinely life-changing.',
     therapist: 'Dr. Anil Verma',
     specialty: 'Stress & Burnout',
   },
 ];
 
 export default function Testimonials() {
-  const [current, setCurrent] = useState(0);
-  const total = testimonials.length;
+  const trackRef = useRef(null);
+  const [active, setActive] = useState(0);
 
-  const prev = () => setCurrent((c) => (c - 1 + total) % total);
-  const next = () => setCurrent((c) => (c + 1) % total);
+  const scrollToCard = (index) => {
+    const track = trackRef.current;
+    const card = track?.children[index];
+    if (!card) return;
+    track.scrollTo({ left: card.offsetLeft - track.offsetLeft, behavior: 'smooth' });
+  };
 
-  const t = testimonials[current];
+  const scrollByCard = (direction) => {
+    const nextIndex = Math.min(Math.max(active + direction, 0), testimonials.length - 1);
+    scrollToCard(nextIndex);
+  };
+
+  // Keep the dots in sync when the person scrolls/drags manually.
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const onScroll = () => {
+      let closest = 0;
+      let minDist = Infinity;
+      Array.from(track.children).forEach((card, i) => {
+        const dist = Math.abs(card.offsetLeft - track.offsetLeft - track.scrollLeft);
+        if (dist < minDist) {
+          minDist = dist;
+          closest = i;
+        }
+      });
+      setActive(closest);
+    };
+    track.addEventListener('scroll', onScroll, { passive: true });
+    return () => track.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
-    <section className="py-24 bg-surface-container-low bg-noise relative" id="testimonials">
-      <div className="max-w-[1280px] mx-auto px-6 md:px-16">
+    <section className="py-20 bg-surface-container-low bg-noise" id="testimonials">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-16 text-center">
         {/* Header */}
-        <div className="text-center mb-16">
-          <span className="inline-block text-label-md font-label-md text-secondary bg-secondary-container px-4 py-1.5 rounded-full mb-4 uppercase tracking-widest">
-            Real Stories
-          </span>
-          <h2 className="text-headline-lg font-headline-lg text-on-background mb-4">
-            Lives Transformed
-          </h2>
-          <p className="text-body-lg font-body-lg text-text-muted max-w-2xl mx-auto">
-            Thousands of people have taken the first step. Here's what they found on the other side.
-          </p>
-        </div>
+        <span className="inline-block text-label-sm font-['Plus_Jakarta_Sans',sans-serif] font-semibold text-secondary bg-secondary-container px-3.5 py-1 rounded-full mb-4 uppercase tracking-[0.15em]">
+          What Our Clients Say
+        </span>
+        <h2 className="text-headline-md font-['Fraunces',serif] font-medium text-on-background mb-10 tracking-tight">
+          Lives <span className="italic text-primary">Transformed</span>
+        </h2>
 
-        {/* Testimonial Card */}
-        <div className="max-w-3xl mx-auto">
-          <div className="bg-surface-container-lowest rounded-3xl p-8 md:p-12 shadow-sm border border-surface-variant relative">
-            {/* Quote icon */}
-            <Quote size={48} className="text-primary-fixed absolute top-8 right-8 opacity-60" fill="currentColor" />
-
-            {/* Stars */}
-            <div className="flex gap-1 mb-6">
-              {Array.from({ length: t.rating }).map((_, i) => (
-                <Star key={i} size={18} fill="currentColor" className="text-tertiary-fixed-dim" />
-              ))}
-            </div>
-
-            {/* Quote */}
-            <blockquote className="text-body-lg font-body-lg text-on-surface leading-relaxed mb-8 relative z-10">
-              "{t.quote}"
-            </blockquote>
-
-            {/* Author */}
-            <div className="flex items-center justify-between flex-wrap gap-4">
-              <div className="flex items-center gap-4">
-                <div className={`w-12 h-12 ${t.avatarBg} rounded-full flex items-center justify-center`}>
-                  <span className={`text-label-md font-label-md font-bold ${t.avatarText}`}>{t.avatar}</span>
+        {/* Scrollable row */}
+        <motion.div
+          ref={trackRef}
+          className="flex gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 text-left [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {testimonials.map((t) => (
+            <div
+              key={t.name}
+              className="snap-start flex-none w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)] bg-surface-container-lowest rounded-2xl p-7 shadow-sm border border-surface-variant"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 flex-shrink-0 ${t.avatarBg} rounded-full flex items-center justify-center`}>
+                    <span className={`text-label-sm font-['Plus_Jakarta_Sans',sans-serif] font-bold ${t.avatarText}`}>{t.avatar}</span>
+                  </div>
+                  <div>
+                    <p className="text-body-md font-['Fraunces',serif] font-medium text-on-surface leading-tight">{t.name}</p>
+                    <p className="text-body-sm font-['Plus_Jakarta_Sans',sans-serif] text-text-muted leading-tight">{t.role}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-headline-md font-headline-md text-on-surface text-base font-semibold">{t.name}</p>
-                  <p className="text-body-sm font-body-sm text-text-muted">{t.role}</p>
-                </div>
+                <Quote size={20} className="text-primary/40 flex-shrink-0" fill="currentColor" />
               </div>
-              <div className="text-right">
-                <p className="text-label-md font-label-md text-primary text-sm font-semibold">{t.therapist}</p>
-                <p className="text-body-sm font-body-sm text-text-muted text-xs">{t.specialty}</p>
+
+              <div className="flex gap-0.5 mb-3">
+                {Array.from({ length: t.rating }).map((_, i) => (
+                  <Star key={i} size={13} fill="currentColor" className="text-tertiary-fixed-dim" />
+                ))}
+              </div>
+
+              <blockquote className="text-body-md font-['Plus_Jakarta_Sans',sans-serif] text-on-surface leading-relaxed mb-5 line-clamp-4">
+                "{t.quote}"
+              </blockquote>
+
+              <div className="pt-4 border-t border-surface-variant flex items-center justify-between">
+                <p className="text-label-sm font-['Plus_Jakarta_Sans',sans-serif] font-semibold text-primary">{t.therapist}</p>
+                <p className="text-body-sm font-['Plus_Jakarta_Sans',sans-serif] text-text-muted">{t.specialty}</p>
               </div>
             </div>
+          ))}
+        </motion.div>
+
+        {/* Controls: arrow · dots · arrow */}
+        <div className="flex items-center justify-center gap-4 mt-8">
+          <button
+            id="testimonials-prev-btn"
+            onClick={() => scrollByCard(-1)}
+            className="w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center hover:bg-surface-container transition-colors"
+            aria-label="Previous testimonial"
+          >
+            <ChevronLeft size={15} className="text-on-surface-variant" />
+          </button>
+
+          <div className="flex gap-1.5">
+            {testimonials.map((_, i) => (
+              <button
+                key={i}
+                id={`testimonials-dot-${i}`}
+                onClick={() => scrollToCard(i)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  i === active ? 'bg-primary w-5' : 'bg-outline-variant w-1.5'
+                }`}
+                aria-label={`Go to testimonial ${i + 1}`}
+              />
+            ))}
           </div>
 
-          {/* Navigation */}
-          <div className="flex items-center justify-center gap-4 mt-8">
-            <button
-              id="testimonials-prev-btn"
-              onClick={prev}
-              className="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center hover:bg-surface-container transition-colors"
-              aria-label="Previous testimonial"
-            >
-              <ChevronLeft size={18} className="text-on-surface-variant" />
-            </button>
-
-            {/* Dots */}
-            <div className="flex gap-2">
-              {testimonials.map((_, i) => (
-                <button
-                  key={i}
-                  id={`testimonials-dot-${i}`}
-                  onClick={() => setCurrent(i)}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    i === current ? 'bg-primary w-6' : 'bg-outline-variant'
-                  }`}
-                  aria-label={`Go to testimonial ${i + 1}`}
-                />
-              ))}
-            </div>
-
-            <button
-              id="testimonials-next-btn"
-              onClick={next}
-              className="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center hover:bg-surface-container transition-colors"
-              aria-label="Next testimonial"
-            >
-              <ChevronRight size={18} className="text-on-surface-variant" />
-            </button>
-          </div>
+          <button
+            id="testimonials-next-btn"
+            onClick={() => scrollByCard(1)}
+            className="w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center hover:bg-surface-container transition-colors"
+            aria-label="Next testimonial"
+          >
+            <ChevronRight size={15} className="text-on-surface-variant" />
+          </button>
         </div>
       </div>
     </section>
