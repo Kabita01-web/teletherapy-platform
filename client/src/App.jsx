@@ -5,23 +5,20 @@ import Register from "./pages/Register";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Therapists from "./pages/Therapists";
+import TherapistDetail from "./pages/TherapistDetail";
 import ClientDashboard from "./pages/dashboard/ClientDashboard";
 import Sessions from "./pages/dashboard/Sessions";
 import Messages from "./pages/dashboard/Messages";
+import Assessments from "./pages/dashboard/Assessments";
+import AssessmentForm from "./pages/dashboard/AssessmentForm";
+import AssessmentDetail from "./pages/dashboard/AssessmentDetail";
+import Resources from "./pages/dashboard/Resources";
+import ResourceDetail from "./pages/dashboard/ResourceDetail";
 import DashboardLayout from "./components/dashboard/DashboardLayout";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/landing/Layout";
 import ScrollToTop from "./components/landing/ScrollToTop";
-
-// Placeholder Therapist Detail
-const TherapistDetailPlaceholder = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background text-text-primary">
-    <h1 className="text-3xl font-headline-lg text-primary">
-      Therapist Profile
-    </h1>
-  </div>
-);
 
 export default function App() {
   return (
@@ -36,10 +33,7 @@ export default function App() {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/therapists" element={<Therapists />} />
-            <Route
-              path="/therapists/:id"
-              element={<TherapistDetailPlaceholder />}
-            />
+            <Route path="/therapists/:id" element={<TherapistDetail />} />
           </Route>
 
           {/* Authentication pages */}
@@ -53,6 +47,14 @@ export default function App() {
               <Route path="/sessions" element={<Sessions />} />
               <Route path="/messages" element={<Messages />} />
               <Route path="/messages/:conversationId" element={<Messages />} />
+              <Route path="/assessments" element={<Assessments />} />
+              <Route
+                path="/assessments/take/:templateKey"
+                element={<AssessmentForm />}
+              />
+              <Route path="/assessments/:id" element={<AssessmentDetail />} />
+              <Route path="/resources" element={<Resources />} />
+              <Route path="/resources/:id" element={<ResourceDetail />} />
             </Route>
 
             <Route
