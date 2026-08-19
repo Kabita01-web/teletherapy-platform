@@ -132,7 +132,7 @@ export default function Contact() {
                 If you are in a life-threatening situation or experiencing a mental health emergency, please call your local emergency services immediately.
               </p>
               <Link
-                to="/therepist"
+                to="/therapists"
                 className="text-label-md font-['Plus_Jakarta_Sans',sans-serif] font-semibold text-primary hover:text-primary-container transition-colors flex items-center gap-1.5 group w-fit"
               >
                 Find a Therapist
