@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'motion/react';
-import { useAuth } from '../contexts/AuthContext';
-import { Eye, EyeOff, AlertCircle } from 'lucide-react';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "motion/react";
+import { useAuth } from "../contexts/AuthContext";
+import { Eye, EyeOff, AlertCircle } from "lucide-react";
 
 /**
  * Restyled to match the rest of the site: same surface/primary tokens as
@@ -14,11 +14,11 @@ import { Eye, EyeOff, AlertCircle } from 'lucide-react';
  */
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const { login } = useAuth();
@@ -26,7 +26,7 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
 
     const result = await login(email, password);
@@ -34,7 +34,7 @@ export default function Login() {
     if (result.success) {
       // Typically we'd check the role and redirect accordingly
       // For now, let's redirect to a dashboard
-      navigate('/dashboard');
+      navigate("/");
     } else {
       setError(result.error);
     }
@@ -52,7 +52,13 @@ export default function Login() {
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 group">
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-white" stroke="currentColor" strokeWidth={2.5}>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                className="w-4 h-4 text-white"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -75,13 +81,18 @@ export default function Login() {
         {error && (
           <div className="mb-6 p-4 rounded-xl bg-error-container text-on-error-container flex items-start">
             <AlertCircle className="w-5 h-5 mr-3 mt-0.5 flex-shrink-0" />
-            <span className="text-body-sm font-['Plus_Jakarta_Sans',sans-serif] font-medium">{error}</span>
+            <span className="text-body-sm font-['Plus_Jakarta_Sans',sans-serif] font-medium">
+              {error}
+            </span>
           </div>
         )}
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="email" className="block text-body-sm font-['Plus_Jakarta_Sans',sans-serif] font-medium text-on-surface mb-1.5">
+            <label
+              htmlFor="email"
+              className="block text-body-sm font-['Plus_Jakarta_Sans',sans-serif] font-medium text-on-surface mb-1.5"
+            >
               Email Address
             </label>
             <input
@@ -98,14 +109,17 @@ export default function Login() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-body-sm font-['Plus_Jakarta_Sans',sans-serif] font-medium text-on-surface mb-1.5">
+            <label
+              htmlFor="password"
+              className="block text-body-sm font-['Plus_Jakarta_Sans',sans-serif] font-medium text-on-surface mb-1.5"
+            >
               Password
             </label>
             <div className="relative">
               <input
                 id="password"
                 name="password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 required
                 value={password}
@@ -118,7 +132,11 @@ export default function Login() {
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-text-muted hover:text-on-surface transition-colors"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
               </button>
             </div>
           </div>
@@ -133,13 +151,19 @@ export default function Login() {
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="h-4 w-4 text-primary focus:ring-primary border-surface-variant rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-body-sm font-['Plus_Jakarta_Sans',sans-serif] text-text-muted">
+              <label
+                htmlFor="remember-me"
+                className="ml-2 block text-body-sm font-['Plus_Jakarta_Sans',sans-serif] text-text-muted"
+              >
                 Remember me
               </label>
             </div>
 
             <div className="text-body-sm">
-              <Link to="/forgot-password" className="font-['Plus_Jakarta_Sans',sans-serif] font-semibold text-primary hover:text-primary-container transition-colors">
+              <Link
+                to="/forgot-password"
+                className="font-['Plus_Jakarta_Sans',sans-serif] font-semibold text-primary hover:text-primary-container transition-colors"
+              >
                 Forgot password?
               </Link>
             </div>
@@ -150,13 +174,15 @@ export default function Login() {
               type="submit"
               disabled={isLoading}
               className={`w-full flex justify-center py-3.5 px-4 rounded-full text-label-md font-['Plus_Jakarta_Sans',sans-serif] font-semibold text-on-primary bg-primary hover:bg-primary-container hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary shadow-sm transition-all duration-300 ${
-                isLoading ? 'opacity-75 cursor-not-allowed hover:translate-y-0' : ''
+                isLoading
+                  ? "opacity-75 cursor-not-allowed hover:translate-y-0"
+                  : ""
               }`}
             >
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-on-primary border-t-transparent rounded-full animate-spin" />
               ) : (
-                'Sign in'
+                "Sign in"
               )}
             </button>
           </div>
@@ -164,8 +190,11 @@ export default function Login() {
 
         <div className="mt-8 text-center">
           <p className="text-body-sm font-['Plus_Jakarta_Sans',sans-serif] text-text-muted">
-            Don't have an account?{' '}
-            <Link to="/register" className="font-semibold text-primary hover:text-primary-container transition-colors">
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="font-semibold text-primary hover:text-primary-container transition-colors"
+            >
               Sign up for free
             </Link>
           </p>
