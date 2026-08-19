@@ -1,168 +1,169 @@
-import { motion } from 'motion/react';
-import { ArrowRight, Shield, UserCheck, TrendingUp, Quote, Star } from 'lucide-react';
+import { motion } from "motion/react";
+import { Link } from "react-router-dom";
+import {
+  ArrowRight,
+  ShieldCheck,
+  HeartHandshake,
+  Sparkles,
+} from "lucide-react";
 
 /**
- * Typography: matches Services.jsx / TrustFeatures.jsx —
- *   Display / headings → "Fraunces" (warm, humanist serif)
- *   Body / UI text     → "Plus Jakarta Sans"
- * Fonts are loaded once, globally — see TrustFeatures.jsx for the <link> tags.
- *
- * Motion: `motion` package (https://motion.dev). Install with `npm install motion`.
- * The Hero sits above the fold, so it animates in on load (initial/animate),
- * not on scroll (whileInView) — that's why this differs slightly from the
- * scroll-triggered pattern used in Services/TrustFeatures.
+ * Polish pass on your latest version:
+ *  - Swapped every hardcoded hex color (#172536, #2f705e, #e8d2b5, etc.)
+ *    for the site's actual design tokens (on-background, primary,
+ *    primary-container, secondary-container). The hex navy/teal palette
+ *    was a one-off that would've clashed with every other page on the
+ *    site, which all use the cream/green token system consistently.
+ *  - "Find a Therapist" is now a real react-router Link to /therepist
+ *    (the route used elsewhere on the site) instead of an inert button.
+ *  - Removed the empty leftover "TRUST MESSAGE" motion.div — it had no
+ *    content after the avatar row was stripped out, so it was just
+ *    adding empty vertical space.
+ *  - Added a slow, continuous background drift on top of the entrance
+ *    scale-in, so the photo keeps a faint, ongoing sense of motion
+ *    instead of going fully static once it settles.
  */
 
 const containerVariants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.12 } },
+  show: { transition: { staggerChildren: 0.14 } },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
-  },
-};
-
-const popVariants = {
-  hidden: { opacity: 0, scale: 0.95, y: 12 },
-  show: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
-  },
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
 };
 
 export default function Hero() {
   return (
-    <section className="relative pt-20 pb-32 overflow-hidden" id="hero">
-      {/* Background */}
-      <div className="absolute inset-0 bg-surface-container-low -z-10 bg-noise" />
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-secondary-container/30 to-transparent -z-10" />
-      <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-primary/5 blur-3xl -z-10 animate-[spin_22s_linear_infinite]" />
-      <div className="absolute bottom-0 right-1/4 w-72 h-72 rounded-full bg-secondary-container/20 blur-3xl -z-10 animate-pulse" />
+    <section id="hero" className="relative min-h-[92vh] md:min-h-screen overflow-hidden flex items-center">
+      {/* ========================================================= */}
+      {/* BACKGROUND IMAGE                                           */}
+      {/* ========================================================= */}
+      <motion.div
+        className="absolute inset-0"
+        initial={{ scale: 1.08 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <motion.img
+          src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=85&w=2200&auto=format&fit=crop"
+          alt="Peaceful woman practicing mindfulness"
+          className="w-full h-full object-cover"
+          animate={{ scale: [1, 1.05, 1] }}
+          transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </motion.div>
 
-      <div className="max-w-[1280px] mx-auto px-6 md:px-16 grid md:grid-cols-2 gap-12 items-center">
-        {/* Left: Text */}
-        <motion.div
-          className="max-w-xl"
-          initial="hidden"
-          animate="show"
-          variants={containerVariants}
-        >
+      {/* ========================================================= */}
+      {/* OVERLAYS — on-background token, matches every other hero    */}
+      {/* ========================================================= */}
+      <div className="absolute inset-0 bg-on-background/65" />
+      <div className="absolute inset-0 bg-gradient-to-r from-on-background/90 via-on-background/60 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-on-background/80 via-transparent to-on-background/20" />
+      <div className="absolute top-1/4 right-[12%] w-72 h-72 rounded-full bg-secondary-container/15 blur-3xl" />
+
+      {/* ========================================================= */}
+      {/* CONTENT                                                    */}
+      {/* ========================================================= */}
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-16 lg:px-20 pt-28 pb-20">
+        <motion.div className="max-w-4xl" initial="hidden" animate="show" variants={containerVariants}>
           {/* Eyebrow */}
-          <motion.div variants={itemVariants} className="flex items-center gap-2 mb-5">
-            <span className="w-6 h-px bg-primary" />
-            <span className="text-label-sm font-['Plus_Jakarta_Sans',sans-serif] font-semibold text-primary uppercase tracking-[0.15em]">
-              You don't have to do it alone
+          <motion.div variants={itemVariants} className="flex items-center gap-3 mb-7">
+            <span className="w-10 h-px bg-secondary-container" />
+            <span className="font-['Plus_Jakarta_Sans',sans-serif] text-xs md:text-sm font-semibold uppercase tracking-[0.22em] text-secondary-container">
+              Your journey to inner balance
             </span>
           </motion.div>
 
+          {/* Main heading */}
           <motion.h1
             variants={itemVariants}
-            className="text-headline-xl font-['Fraunces',serif] font-medium text-on-background mb-6 leading-tight tracking-tight"
+            className="font-['Fraunces',serif] text-white font-medium tracking-tight leading-[0.95] text-5xl sm:text-6xl md:text-7xl lg:text-[92px]"
           >
-            Better Mind.<br />
-            <span className="italic text-primary">Better You.</span>
+            Better Mind.
+            <br />
+            <span className="italic text-secondary-container">Better You.</span>
           </motion.h1>
 
+          {/* Description */}
           <motion.p
             variants={itemVariants}
-            className="text-body-lg font-['Plus_Jakarta_Sans',sans-serif] text-text-muted mb-8 leading-relaxed"
+            className="mt-8 max-w-2xl text-base md:text-lg lg:text-xl leading-relaxed text-white/85 font-['Plus_Jakarta_Sans',sans-serif]"
           >
-            Compassionate therapy to help you overcome challenges, build resilience, and create a life that feels meaningful.
+            Compassionate therapy that helps you navigate life's challenges, build resilience, and create a life that feels meaningful.
           </motion.p>
 
-          <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-6 mb-12">
+          {/* CTA */}
+          <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-4 mt-9">
             <button
               id="hero-cta-primary"
-              className="font-['Plus_Jakarta_Sans',sans-serif] font-semibold text-label-md bg-primary text-on-primary px-8 py-4 rounded-full hover:bg-primary-container hover:text-on-primary-container hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 shadow-md flex items-center justify-center gap-2 group"
+              className="group flex items-center gap-3 rounded-full bg-primary px-7 md:px-8 py-4 font-['Plus_Jakarta_Sans',sans-serif] text-sm md:text-base font-semibold text-on-primary shadow-xl shadow-black/20 transition-all duration-300 hover:-translate-y-1 hover:bg-primary-container hover:text-on-primary-container hover:shadow-2xl"
             >
-              Book a Session
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform duration-200" />
+              Start Your Journey
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 transition-transform duration-300 group-hover:translate-x-1">
+                <ArrowRight size={15} />
+              </span>
             </button>
-            <button
-              id="hero-cta-secondary"
-              className="font-['Plus_Jakarta_Sans',sans-serif] font-semibold text-label-md text-on-background hover:text-primary transition-colors flex items-center justify-center gap-1.5 group"
-            >
-              Learn More
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform duration-200" />
-            </button>
-          </motion.div>
 
-          {/* Trust row */}
-          <motion.div variants={itemVariants} className="flex flex-wrap gap-8">
-            {[
-              { icon: Shield, label: 'Confidential & Safe' },
-              { icon: UserCheck, label: 'Personalized Approach' },
-              { icon: TrendingUp, label: 'Support for Long Lasting Change' },
-            ].map(({ icon: Icon, label }) => (
-              <div key={label} className="flex flex-col items-center text-center gap-2 max-w-[100px] group cursor-default">
-                <div className="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-0.5">
-                  <Icon size={20} className="text-on-secondary-container" />
-                </div>
-                <p className="text-body-sm font-['Plus_Jakarta_Sans',sans-serif] text-text-muted leading-snug">{label}</p>
-              </div>
-            ))}
+            <Link
+              to="/therepist"
+              id="hero-cta-secondary"
+              className="group flex items-center gap-2 rounded-full border border-white/35 bg-white/10 px-7 md:px-8 py-4 font-['Plus_Jakarta_Sans',sans-serif] text-sm md:text-base font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:text-on-background"
+            >
+              Find a Therapist
+              <ArrowRight size={17} className="transition-transform duration-300 group-hover:translate-x-1" />
+            </Link>
           </motion.div>
         </motion.div>
-
-        {/* Right: Hero Image */}
-        <div className="relative hidden md:block h-[520px]">
-          <div className="absolute -top-8 -right-8 w-64 h-64 rounded-full bg-secondary-container/60 -z-10 animate-[bounce_9s_ease-in-out_infinite]" />
-          <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full bg-primary/10 -z-10 blur-2xl animate-pulse" />
-
-          <motion.div
-            className="relative rounded-3xl overflow-hidden shadow-2xl h-full group"
-            initial="hidden"
-            animate="show"
-            variants={popVariants}
-            transition={{ delay: 0.15 }}
-          >
-            <img
-              src="https://images.unsplash.com/photo-1714976694895-d38078c1a3c0?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt="A calm, modern teletherapy session — a person talking warmly through a video call from a serene home environment"
-              className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-on-background/25 via-transparent to-transparent" />
-            <div className="absolute inset-0 bg-primary/5 mix-blend-multiply" />
-          </motion.div>
-
-          {/* Floating rating / trust chip */}
-          <motion.div
-            className="absolute top-6 -left-6 bg-surface rounded-2xl px-4 py-3 shadow-lg flex items-center gap-2"
-            initial="hidden"
-            animate="show"
-            variants={popVariants}
-            transition={{ delay: 0.45 }}
-          >
-            <div className="flex -space-x-1">
-              {[...Array(3)].map((_, i) => (
-                <Star key={i} size={14} className="text-primary" fill="currentColor" />
-              ))}
-            </div>
-            <span className="text-body-sm font-['Plus_Jakarta_Sans',sans-serif] text-on-surface">Licensed, caring therapists</span>
-          </motion.div>
-
-          {/* Floating quote card */}
-          <motion.div
-            className="absolute bottom-8 -right-6 bg-surface rounded-2xl p-5 shadow-lg max-w-[220px] hover:-translate-y-1 transition-transform duration-300"
-            initial="hidden"
-            animate="show"
-            variants={popVariants}
-            transition={{ delay: 0.6 }}
-          >
-            <Quote size={20} className="text-primary mb-2" fill="currentColor" />
-            <p className="text-body-sm font-['Fraunces',serif] italic text-on-surface leading-snug">
-              Healing takes time, and asking for help is a courageous step.
-            </p>
-          </motion.div>
-        </div>
       </div>
+
+      {/* ========================================================= */}
+      {/* TRUST FEATURES                                             */}
+      {/* ========================================================= */}
+      <div className="absolute z-20 bottom-8 left-1/2 w-[calc(100%-3rem)] max-w-5xl -translate-x-1/2">
+        <motion.div
+          initial={{ opacity: 0, y: 25 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-12"
+        >
+          {[
+            { icon: ShieldCheck, title: 'Safe & Confidential', desc: 'Your privacy matters' },
+            { icon: HeartHandshake, title: 'Compassionate Care', desc: 'Therapists who listen' },
+            { icon: Sparkles, title: 'Personalized Support', desc: 'Care made for you' },
+          ].map(({ icon: Icon, title, desc }) => (
+            <div key={title} className="flex items-center gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 backdrop-blur-md">
+                <Icon size={21} className="text-secondary-container" />
+              </div>
+              <div>
+                <p className="font-['Plus_Jakarta_Sans',sans-serif] text-sm font-semibold text-white">{title}</p>
+                <p className="mt-1 text-xs text-white/60 font-['Plus_Jakarta_Sans',sans-serif]">{desc}</p>
+              </div>
+            </div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* ========================================================= */}
+      {/* SCROLL INDICATOR                                           */}
+      {/* ========================================================= */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+        className="absolute right-6 md:right-10 bottom-36 hidden md:flex flex-col items-center gap-3 text-white/60"
+      >
+        <span className="font-['Plus_Jakarta_Sans',sans-serif] text-[10px] uppercase tracking-[0.25em] [writing-mode:vertical-rl]">
+          Scroll to explore
+        </span>
+        <motion.span
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          className="h-10 w-px bg-white/40"
+        />
+      </motion.div>
     </section>
   );
 }
