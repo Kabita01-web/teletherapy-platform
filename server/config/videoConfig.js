@@ -1,3 +1,5 @@
+// config/videoConfig.js
+
 const twilio = require("twilio");
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -25,12 +27,12 @@ const createVideoToken = (identity, roomName) => {
   return token.toJwt();
 };
 
-// Create a room
-const createRoom = async (roomName, type = "group") => {
+// Create a room - USE 'go' FOR TRIAL ACCOUNTS
+const createRoom = async (roomName, type = "go") => {
   try {
     const room = await client.video.rooms.create({
       uniqueName: roomName,
-      type: type,
+      type: type, // 'go' for P2P (trial), 'group' for paid
       statusCallback: process.env.VIDEO_STATUS_CALLBACK || null,
       recordParticipantsOnConnect: false,
     });
@@ -51,7 +53,7 @@ const getRoom = async (roomName) => {
     return rooms.length > 0 ? rooms[0] : null;
   } catch (error) {
     console.error("Error getting room:", error);
-    throw error;
+    return null; // Don't throw, just return null
   }
 };
 
@@ -75,7 +77,7 @@ const getParticipants = async (roomSid) => {
     return participants;
   } catch (error) {
     console.error("Error getting participants:", error);
-    throw error;
+    return [];
   }
 };
 
