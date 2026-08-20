@@ -6,6 +6,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Therapists from "./pages/Therapists";
 import TherapistDetail from "./pages/TherapistDetail";
+import Booking from "./pages/Booking";
 import ClientDashboard from "./pages/dashboard/ClientDashboard";
 import Sessions from "./pages/dashboard/Sessions";
 import Messages from "./pages/dashboard/Messages";
@@ -14,6 +15,7 @@ import AssessmentForm from "./pages/dashboard/AssessmentForm";
 import AssessmentDetail from "./pages/dashboard/AssessmentDetail";
 import Resources from "./pages/dashboard/Resources";
 import ResourceDetail from "./pages/dashboard/ResourceDetail";
+import SessionRoom from "./pages/dashboard/SessionRoom";
 import DashboardLayout from "./components/dashboard/DashboardLayout";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -57,12 +59,9 @@ export default function App() {
               <Route path="/resources/:id" element={<ResourceDetail />} />
             </Route>
 
-            <Route
-              path="/book/:id"
-              element={
-                <div className="p-10 text-center">Booking flow coming soon</div>
-              }
-            />
+            <Route path="/book/:id" element={<Booking />} />
+
+            <Route path="/session/:id" element={<SessionRoom />} />
           </Route>
         </Routes>
       </BrowserRouter>
