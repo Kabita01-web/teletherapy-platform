@@ -40,6 +40,52 @@ const userSchema = new mongoose.Schema(
         endTime: String,
       },
     ],
+    // Public-facing profile fields, shown on the therapist directory
+    // (Therapists.jsx) and profile page. Added to support a real
+    // therapist directory instead of falling back to placeholder text
+    // for every therapist.
+    bio: {
+      type: String,
+      trim: true,
+    },
+    photo: {
+      type: String, // URL
+      trim: true,
+    },
+    credentials: {
+      type: String, // e.g. "Ph.D., LCP"
+      trim: true,
+    },
+    languages: [
+      {
+        type: String,
+      },
+    ],
+    modality: [
+      {
+        type: String,
+        enum: ["video", "chat"], // matches Appointment.modality per README
+      },
+    ],
+    experience: {
+      type: Number, // years
+      min: 0,
+    },
+    // NOTE: rating/reviews are plain stored numbers for now, not computed
+    // from an actual review system (none exists yet). Treat these as
+    // placeholder/manually-set values until a real reviews feature is
+    // built — at that point these should probably become aggregates
+    // computed from review documents, not fields a therapist sets directly.
+    rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+    },
+    reviews: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     // Client-specific fields
     assignedTherapist: {
       type: mongoose.Schema.Types.ObjectId,
