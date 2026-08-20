@@ -10,6 +10,8 @@ const {
 // @desc    Generate video token for a session
 // @route   POST /api/video/token
 // @access  Private
+// In videoController.js - update the generateToken function
+
 const generateToken = async (req, res) => {
   try {
     const { appointmentId } = req.body;
@@ -52,13 +54,26 @@ const generateToken = async (req, res) => {
     // Create room name
     const roomName = `appointment-${appointmentId}`;
 
-    // Check if room exists, if not create it
-    let room = await getRoom(roomName);
+    // Try to get existing room, create if not exists
+    let room = null;
+    try {
+      room = await getRoom(roomName);
+    } catch (err) {
+      // If getRoom fails (trial account limitation), just create a new room
+      console.log("Could not check existing room, creating new one...");
+    }
+
     if (!room) {
-      room = await createRoom(roomName);
-      // Save room SID to appointment
-      appointment.videoRoomSid = room.sid;
-      await appointment.save();
+      try {
+        room = await createRoom(roomName, "go"); // Force P2P for trial
+        if (room && room.sid) {
+          appointment.videoRoomSid = room.sid;
+          await appointment.save();
+        }
+      } catch (createErr) {
+        console.error("Error creating room:", createErr);
+        // If room creation fails, still generate token - the room might exist
+      }
     }
 
     // Generate token for user
@@ -77,6 +92,7 @@ const generateToken = async (req, res) => {
       otherParticipant: isClient ? appointment.therapist : appointment.client,
     });
   } catch (error) {
+    console.error("Token generation error:", error);
     res.status(500).json({ message: error.message });
   }
 };
